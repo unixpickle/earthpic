@@ -15,7 +15,9 @@ const numFetchGoroutines = 10
 // pixels of the Earth's surface.
 // The latStep and lonStep arguments specify how many
 // degrees to move between pixels.
-func FetchPixels(latStep, lonStep float64) (<-chan Pixel, <-chan error) {
+// If apiKey is not the empty string, it will be used
+// as an API key for the static maps API.
+func FetchPixels(latStep, lonStep float64, apiKey string) (<-chan Pixel, <-chan error) {
 	pixelChan := make(chan Pixel)
 	errChan := make(chan error, 1)
 
@@ -34,7 +36,7 @@ func FetchPixels(latStep, lonStep float64) (<-chan Pixel, <-chan error) {
 		go func() {
 			defer wg.Done()
 			for coord := range coordChan {
-				pixel, err := FetchPixel(coord[0], coord[1])
+				pixel, err := FetchPixel(coord[0], coord[1], apiKey)
 				if err != nil {
 					errVal.Store(err)
 					return
@@ -58,9 +60,14 @@ func FetchPixels(latStep, lonStep float64) (<-chan Pixel, <-chan error) {
 
 // FetchPixel fetches the pixel at the given latitude
 // and longitude using Google Maps.
-func FetchPixel(lat, lon float64) (*Pixel, error) {
+// If apiKey is not an empty string, the API key will
+// be used for the API call.
+func FetchPixel(lat, lon float64, apiKey string) (*Pixel, error) {
 	url := fmt.Sprintf("http://maps.googleapis.com/maps/api/staticmap?center=%f,%f"+
 		"&zoom=1&size=1x1&maptype=roadmap&sensor=false", lat, lon)
+	if apiKey != "" {
+		url += "&key=" + apiKey
+	}
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err

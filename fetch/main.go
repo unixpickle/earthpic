@@ -13,6 +13,7 @@ import (
 
 var LatStep = flag.Float64("latstep", 1, "latitude step")
 var LonStep = flag.Float64("lonstep", 1, "longitude step")
+var APIKey = flag.String("apikey", "", "static maps API key")
 
 func main() {
 	if len(os.Args) < 2 {
@@ -23,7 +24,7 @@ func main() {
 		dieUsage()
 	}
 
-	pixelChan, errChan := earthpic.FetchPixels(*LatStep, *LonStep)
+	pixelChan, errChan := earthpic.FetchPixels(*LatStep, *LonStep, *APIKey)
 	var pic earthpic.Picture
 	for pixel := range pixelChan {
 		pic = append(pic, pixel)
