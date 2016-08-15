@@ -6,7 +6,8 @@
   var FAR = 10000;
   var WHITE = 0xffffff;
 
-  function App() {
+  function App(picture) {
+    this.picture = picture;
     this.container = document.getElementById('view');
     this.renderer = new THREE.WebGLRenderer();
     this.camera = new THREE.PerspectiveCamera(VIEW_ANGLE,
@@ -77,7 +78,13 @@
   };
 
   window.addEventListener('load', function() {
-    new App();
+    window.fetchPicture3D('assets/pictures/image1_1.csv', function(err, pic) {
+      if (err) {
+        alert('Error: ' + err);
+      } else {
+        new App(pic);
+      }
+    });
   });
 
 })();
