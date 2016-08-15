@@ -88,7 +88,7 @@
   };
 
   window.addEventListener('load', function() {
-    window.fetchPicture3D('assets/pictures/compressed1_05.csv', function(err, pic) {
+    window.fetchPicture3D('assets/pictures/compressed05_05.csv', function(err, pic) {
       if (err) {
         alert('Error: ' + err);
       } else {

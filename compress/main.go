@@ -44,7 +44,6 @@ func CompressImage(p *Picture) {
 			}
 		}
 		p.Rows[i] = row
-		fmt.Println("row", i, "len", len(row))
 	}
 }
 
