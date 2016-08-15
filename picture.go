@@ -93,5 +93,5 @@ func latLonDistance(lat1, lon1, lat2, lon2 float64) float64 {
 	latDist := math.Abs(lat1 - lat2)
 	lonDist := math.Min(math.Abs(lon1-lon2), math.Min(math.Abs(360+lon1-lon2),
 		math.Abs(360+lon2-lon1)))
-	return math.Sqrt(latDist*latDist + lonDist*lonDist)
+	return latDist*latDist + lonDist*lonDist
 }

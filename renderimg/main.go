@@ -36,10 +36,10 @@ func main() {
 	res := image.NewRGBA(image.Rect(0, 0, ImageSize, ImageSize))
 
 	for imageY := 0; imageY < ImageSize; imageY++ {
-		rawY := float64(imageY)/(ImageSize/2) - 1
+		rawY := 1 - float64(imageY)/(ImageSize/2)
 		lat := math.Asin(rawY) * 180 / math.Pi
 		for imageX := 0; imageX < ImageSize; imageX++ {
-			rawX := float64(imageX)/(ImageSize/2) - 1
+			rawX := 1 - float64(imageX)/(ImageSize/2)
 			lonCos := rawX / math.Cos(lat*math.Pi/180)
 			lon := math.Acos(lonCos) * 180 / math.Pi
 			if math.IsNaN(lon) {
