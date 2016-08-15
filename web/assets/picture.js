@@ -26,6 +26,7 @@
       }
       this._rows[lat].push({lon: lon, r: r, g: g, b: b});
     }
+    console.log(this);
   }
 
   Picture3D.prototype.colorAt = function(lat, lon) {
@@ -42,13 +43,13 @@
     for (var i = 0, len = entries.length; i < len; ++i) {
       var entry = entries[i];
       if (i === 0 || Math.abs(entry.lon-lon) < Math.abs(bestLon-lon)) {
-        bestLon = lon;
+        bestLon = entry.lon;
         bestEntry = entry;
       }
     }
     var r = Math.round(bestEntry.r * 0xff);
-    var g = Math.round(bestEntry.r * 0xff);
-    var b = Math.round(bestEntry.r * 0xff);
+    var g = Math.round(bestEntry.g * 0xff);
+    var b = Math.round(bestEntry.b * 0xff);
     return (r << 16) | (g << 8) | b;
   };
 

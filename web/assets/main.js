@@ -31,10 +31,21 @@
 
   App.prototype.createGlobe = function() {
     // Courtesy of https://github.com/mrdoob/three.js/issues/465
-    this.sphere = new THREE.SphereGeometry(100, 100, 100);
+    this.sphere = new THREE.SphereGeometry(100, 250, 250);
     for (var i = 0, len = this.sphere.faces.length; i < len; ++i) {
       var face = this.sphere.faces[i];
-      face.color.setHex(Math.random() * 0xffffff);
+      var lat = Math.asin(face.normal.y);
+      var lon = -Math.acos(face.normal.x / Math.cos(lat));
+
+      if (face.normal.z < 0) {
+        lon *= -1;
+      }
+
+      lat *= 180 / Math.PI;
+      lon *= 180 / Math.PI;
+
+      var color = this.picture.colorAt(lat, lon);
+      face.color.setHex(color);
     }
     this.mesh = new THREE.Mesh(this.sphere,
       new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors}));
