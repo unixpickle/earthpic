@@ -30,8 +30,7 @@
   };
 
   App.prototype.createGlobe = function() {
-    // Courtesy of https://github.com/mrdoob/three.js/issues/465
-    this.sphere = new THREE.SphereGeometry(100, 250, 250);
+    this.sphere = new THREE.SphereGeometry(100, 360, 360);
     for (var i = 0, len = this.sphere.faces.length; i < len; ++i) {
       var face = this.sphere.faces[i];
       var lat = Math.asin(face.normal.y);
@@ -89,7 +88,7 @@
   };
 
   window.addEventListener('load', function() {
-    window.fetchPicture3D('assets/pictures/image1_1.csv', function(err, pic) {
+    window.fetchPicture3D('assets/pictures/compressed1_05.csv', function(err, pic) {
       if (err) {
         alert('Error: ' + err);
       } else {
