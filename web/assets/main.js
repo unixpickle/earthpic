@@ -20,20 +20,25 @@
 
     this.createGlobe();
     this.createLight();
-    this.renderer.render(this.scene, this.camera);
+    this.registerMouseEvents();
+    this.draw();
   }
+
+  App.prototype.draw = function() {
+    this.renderer.render(this.scene, this.camera);
+  };
 
   App.prototype.createGlobe = function() {
     // Courtesy of https://github.com/mrdoob/three.js/issues/465
-    var sphere = new THREE.SphereGeometry(100, 100, 100);
-    for (var i = 0, len = sphere.faces.length; i < len; ++i) {
-      var face = sphere.faces[i];
+    this.sphere = new THREE.SphereGeometry(100, 100, 100);
+    for (var i = 0, len = this.sphere.faces.length; i < len; ++i) {
+      var face = this.sphere.faces[i];
       face.color.setHex(Math.random() * 0xffffff);
     }
-    var mesh = new THREE.Mesh(sphere,
+    this.mesh = new THREE.Mesh(this.sphere,
       new THREE.MeshLambertMaterial({vertexColors: THREE.FaceColors}));
-    sphere.__dirtyColors = true;
-    this.scene.add(mesh);
+    this.sphere.__dirtyColors = true;
+    this.scene.add(this.mesh);
   };
 
   App.prototype.createLight = function() {
@@ -42,6 +47,33 @@
     light.position.y = 0;
     light.position.z = 100;
     this.scene.add(light);
+  };
+
+  App.prototype.registerMouseEvents = function() {
+    this.container.addEventListener('mousedown', function(downEvent) {
+      var oldMatrix = new THREE.Matrix4();
+      oldMatrix.copy(this.mesh.matrix);
+
+      var upListener, moveListener;
+      upListener = function() {
+        window.removeEventListener('mouseup', upListener);
+        window.removeEventListener('mousemove', moveListener);
+      }.bind(this);
+      moveListener = function(moveEvent) {
+        var xChange = moveEvent.clientX - downEvent.clientX;
+        var yChange = -(moveEvent.clientY - downEvent.clientY);
+        var axis = new THREE.Vector3(-yChange, xChange, 0);
+        var radians = axis.length() / 120;
+        var rotation = new THREE.Matrix4();
+        rotation.makeRotationAxis(axis.normalize(), radians);
+        this.mesh.matrix.copy(oldMatrix);
+        this.mesh.matrix.premultiply(rotation);
+        this.mesh.rotation.setFromRotationMatrix(this.mesh.matrix);
+        this.draw();
+      }.bind(this);
+      window.addEventListener('mouseup', upListener);
+      window.addEventListener('mousemove', moveListener);
+    }.bind(this));
   };
 
   window.addEventListener('load', function() {
