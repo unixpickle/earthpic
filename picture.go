@@ -24,11 +24,11 @@ type Picture struct {
 	Pixels []Pixel
 }
 
-// Get returns the red, green, and blue color at the
+// At returns the red, green, and blue color at the
 // given latitude and longitude on this picture.
 // The latitude and longitude needn't perfectly match
 // those of any pixel in the picture.
-func (p *Picture) Get(lat, lon float64) (r, g, b float64) {
+func (p *Picture) At(lat, lon float64) (r, g, b float64) {
 	var shortDist float64
 	var nearest Pixel
 	for i, pixel := range p.Pixels {
@@ -87,11 +87,10 @@ func (p *Picture) UnmarshalText(text []byte) error {
 	return nil
 }
 
-// latLonDistance is a measure of distance between global
-// coordinates which accounts for wrapping.
+// latLonDistance is a measure of distance between positions
+// on a globe.
 func latLonDistance(lat1, lon1, lat2, lon2 float64) float64 {
-	latDist := math.Min(math.Abs(lat1-lat2), math.Min(math.Abs(180+lat1-lat2),
-		math.Abs(180+lat2-lat1)))
+	latDist := math.Abs(lat1 - lat2)
 	lonDist := math.Min(math.Abs(lon1-lon2), math.Min(math.Abs(360+lon1-lon2),
 		math.Abs(360+lon2-lon1)))
 	return math.Sqrt(latDist*latDist + lonDist*lonDist)

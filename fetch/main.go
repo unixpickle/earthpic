@@ -41,7 +41,7 @@ func main() {
 }
 
 func dieUsage() {
-	fmt.Fprintln(os.Stderr, "Usage:", os.Args[0], "[flags] output.json\n\nFlags:")
+	fmt.Fprintln(os.Stderr, "Usage:", os.Args[0], "[flags] output.csv\n\nFlags:")
 	flag.PrintDefaults()
 	fmt.Fprintln(os.Stderr)
 	os.Exit(1)
