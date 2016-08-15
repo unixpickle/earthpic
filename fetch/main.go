@@ -2,7 +2,6 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -27,14 +26,14 @@ func main() {
 	pixelChan, errChan := earthpic.FetchPixels(*LatStep, *LonStep, *APIKey)
 	var pic earthpic.Picture
 	for pixel := range pixelChan {
-		pic = append(pic, pixel)
+		pic.Pixels = append(pic.Pixels, pixel)
 	}
 	if err := <-errChan; err != nil {
 		fmt.Fprintln(os.Stderr, "Error fetching:", err)
 		fmt.Fprintln(os.Stderr, "Saving partial results.")
 	}
 
-	outData, _ := json.Marshal(pic)
+	outData, _ := pic.MarshalText()
 	if err := ioutil.WriteFile(flag.Args()[0], outData, 0755); err != nil {
 		fmt.Fprintln(os.Stderr, "Error writing output:", err)
 		os.Exit(1)
