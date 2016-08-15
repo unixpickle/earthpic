@@ -26,7 +26,6 @@
       }
       this._rows[lat].push({lon: lon, r: r, g: g, b: b});
     }
-    console.log(this);
   }
 
   Picture3D.prototype.colorAt = function(lat, lon) {
@@ -38,15 +37,21 @@
       }
     }
     var entries = this._rows[bestLat];
-    var bestLon = 0;
-    var bestEntry = null;
-    for (var i = 0, len = entries.length; i < len; ++i) {
-      var entry = entries[i];
-      if (i === 0 || Math.abs(entry.lon-lon) < Math.abs(bestLon-lon)) {
-        bestLon = entry.lon;
-        bestEntry = entry;
+    var lowEntry = 0;
+    var highEntry = entries.length - 1;
+    while (lowEntry < highEntry-1) {
+      var midEntry = Math.round((lowEntry + highEntry) / 2);
+      var entry = entries[midEntry];
+      if (entry.lon == lon) {
+        lowEntry = midEntry;
+        break;
+      } else if (entry.lon < lon) {
+        lowEntry = midEntry;
+      } else if (entry.lon > lon) {
+        highEntry = midEntry;
       }
     }
+    var bestEntry = entries[lowEntry];
     var r = Math.round(bestEntry.r * 0xff);
     var g = Math.round(bestEntry.g * 0xff);
     var b = Math.round(bestEntry.b * 0xff);
