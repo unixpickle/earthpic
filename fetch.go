@@ -10,6 +10,7 @@ import (
 )
 
 const numFetchGoroutines = 10
+const disableEquatorLine = "&style=feature:administrative|element:geometry|visibility:off"
 
 // FetchPixels uses Google Maps to fetch evenly spaced
 // pixels of the Earth's surface.
@@ -64,7 +65,8 @@ func FetchPixels(latStep, lonStep float64, apiKey string) (<-chan Pixel, <-chan 
 // be used for the API call.
 func FetchPixel(lat, lon float64, apiKey string) (*Pixel, error) {
 	url := fmt.Sprintf("http://maps.googleapis.com/maps/api/staticmap?center=%f,%f"+
-		"&zoom=1&size=1x1&maptype=roadmap&sensor=false", lat, lon)
+		"&zoom=1&size=1x1&maptype=roadmap&sensor=false"+disableEquatorLine,
+		lat, lon)
 	if apiKey != "" {
 		url += "&key=" + apiKey
 	}
