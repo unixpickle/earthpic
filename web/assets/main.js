@@ -1,6 +1,6 @@
 (function() {
 
-  var SIZE = {width: 400, height: 300};
+  var SIZE = {width: 300, height: 300};
   var VIEW_ANGLE = 45;
   var NEAR = 0.1;
   var FAR = 10000;
@@ -17,11 +17,16 @@
     this.scene.add(this.camera);
     this.camera.position.z = 300;
     this.renderer.setSize(SIZE.width, SIZE.height);
+    this.container.innerHTML = '';
+    this.container.style.backgroundColor = 'black';
     this.container.appendChild(this.renderer.domElement);
 
     this.createGlobe();
     this.createLight();
     this.registerMouseEvents();
+    if ('ontouchstart' in document.documentElement) {
+      this.registerTouchEvents();
+    }
     this.draw();
 
     var centerButton = document.getElementById('center-button');
@@ -88,6 +93,17 @@
     this.scene.add(light);
   };
 
+  App.prototype.mouseRotate = function(startMatrix, xChange, yChange) {
+    var axis = new THREE.Vector3(-yChange, xChange, 0);
+    var radians = axis.length() / 120;
+    var rotation = new THREE.Matrix4();
+    rotation.makeRotationAxis(axis.normalize(), radians);
+    this.mesh.matrix.copy(startMatrix);
+    this.mesh.matrix.premultiply(rotation);
+    this.mesh.rotation.setFromRotationMatrix(this.mesh.matrix);
+    this.draw();
+  };
+
   App.prototype.registerMouseEvents = function() {
     this.container.addEventListener('mousedown', function(downEvent) {
       var oldMatrix = new THREE.Matrix4();
@@ -101,17 +117,26 @@
       moveListener = function(moveEvent) {
         var xChange = moveEvent.clientX - downEvent.clientX;
         var yChange = -(moveEvent.clientY - downEvent.clientY);
-        var axis = new THREE.Vector3(-yChange, xChange, 0);
-        var radians = axis.length() / 120;
-        var rotation = new THREE.Matrix4();
-        rotation.makeRotationAxis(axis.normalize(), radians);
-        this.mesh.matrix.copy(oldMatrix);
-        this.mesh.matrix.premultiply(rotation);
-        this.mesh.rotation.setFromRotationMatrix(this.mesh.matrix);
-        this.draw();
+        this.mouseRotate(oldMatrix, xChange, yChange);
       }.bind(this);
       window.addEventListener('mouseup', upListener);
       window.addEventListener('mousemove', moveListener);
+    }.bind(this));
+  };
+
+  App.prototype.registerTouchEvents = function() {
+    var startEvent, oldMatrix;
+    this.container.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      startEvent = e;
+      oldMatrix = new THREE.Matrix4();
+      oldMatrix.copy(this.mesh.matrix);
+    }.bind(this));
+    this.container.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      var xChange = e.pageX - startEvent.pageX;
+      var yChange = -(e.pageY - startEvent.pageY);
+      this.mouseRotate(oldMatrix, xChange, yChange);
     }.bind(this));
   };
 
