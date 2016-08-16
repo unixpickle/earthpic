@@ -128,12 +128,13 @@
     var startEvent, oldMatrix;
     this.container.addEventListener('touchstart', function(e) {
       e.preventDefault();
-      startEvent = e;
+      startEvent = e.changedTouches[0];
       oldMatrix = new THREE.Matrix4();
       oldMatrix.copy(this.mesh.matrix);
     }.bind(this));
     this.container.addEventListener('touchmove', function(e) {
       e.preventDefault();
+      e = e.changedTouches[0];
       var xChange = e.pageX - startEvent.pageX;
       var yChange = -(e.pageY - startEvent.pageY);
       this.mouseRotate(oldMatrix, xChange, yChange);
